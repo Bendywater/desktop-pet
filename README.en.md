@@ -2,6 +2,10 @@
 
 A cross-platform desktop pet built with Electron. The character floats on your desktop in a transparent, frameless, always-on-top window, supporting drag, click-to-switch actions, a right-click menu, and a tray icon.
 
+## Preview
+
+![Desktop pet demo](docs/demo.gif)
+
 ## Features
 
 - Transparent, frameless, always-on-top window showing only the character

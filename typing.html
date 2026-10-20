@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>打字桌宠 · 一二在打字</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    background: transparent;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .stage {
+    width: 520px;
+    height: 360px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .bubble {
+    margin-top: 10px;
+    background: #fff;
+    border: 2px solid #5A4632;
+    border-radius: 14px;
+    padding: 6px 16px;
+    font-size: 15px;
+    color: #3A2E22;
+    font-weight: 600;
+    position: relative;
+  }
+  .bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -8px; left: 50%;
+    transform: translateX(-50%);
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid #fff;
+  }
+  .cursor { animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .row {
+    display: flex;
+    align-items: flex-end;
+    gap: 28px;
+    margin-top: 16px;
+  }
+  .pet {
+    position: relative;
+    width: 130px;
+    height: 170px;
+    animation: bounce .16s linear infinite;
+  }
+  .pet:nth-child(2) { animation-delay: .08s; }
+
+  .face {
+    position: absolute;
+    top: 26px; left: 10px;
+    width: 110px; height: 100px;
+    border-radius: 50%;
+    border: 3px solid #5A4632;
+  }
+  .yellow .face { background: #FFD97A; }
+  .brown  .face { background: #C98B5F; }
+
+  .ear {
+    position: absolute;
+    top: 16px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 3px solid #5A4632;
+  }
+  .ear.left  { left: 18px; }
+  .ear.right { right: 18px; }
+  .yellow .ear { background: #FFD97A; }
+  .brown  .ear { background: #C98B5F; }
+
+  .eye {
+    position: absolute;
+    top: 56px;
+    width: 6px; height: 16px;
+    background: #3A2E22;
+    border-radius: 3px;
+  }
+  .eye.left  { left: 38px; }
+  .eye.right { right: 38px; }
+
+  .cheek {
+    position: absolute;
+    top: 76px;
+    width: 16px; height: 10px;
+    background: #FF9E9E;
+    border-radius: 50%;
+    opacity: .7;
+  }
+  .cheek.left  { left: 24px; }
+  .cheek.right { right: 24px; }
+
+  .mouth {
+    position: absolute;
+    top: 78px; left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 6px;
+    border-bottom: 3px solid #3A2E22;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .arm {
+    position: absolute;
+    top: 118px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 3px solid #5A4632;
+    background: #FFD97A;
+  }
+  .brown .arm { background: #C98B5F; }
+  .arm.left  { left: 16px;  animation: tap .16s linear infinite; }
+  .arm.right { right: 16px; animation: tap .16s linear infinite; animation-delay: .08s; }
+
+  .keyboard {
+    margin-top: 6px;
+    width: 380px;
+    height: 76px;
+    background: #4A3F35;
+    border: 3px solid #5A4632;
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    align-content: flex-start;
+  }
+  .key {
+    width: 20px; height: 20px;
+    background: #E9E2D6;
+    border-radius: 4px;
+    transition: background .05s;
+  }
+  .key.hit { background: #FFD97A; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+  @keyframes tap {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(10px); }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="bubble"><span id="text">一二在打字</span><span class="cursor">|</span></div>
+    <div class="row">
+      <div class="pet yellow">
+        <div class="ear left"></div><div class="ear right"></div>
+        <div class="face">
+          <div class="eye left"></div><div class="eye right"></div>
+          <div class="cheek left"></div><div class="cheek right"></div>
+          <div class="mouth"></div>
+        </div>
+        <div class="arm left"></div><div class="arm right"></div>
+      </div>
+      <div class="pet brown">
+        <div class="ear left"></div><div class="ear right"></div>
+        <div class="face">
+          <div class="eye left"></div><div class="eye right"></div>
+          <div class="cheek left"></div><div class="cheek right"></div>
+          <div class="mouth"></div>
+        </div>
+        <div class="arm left"></div><div class="arm right"></div>
+      </div>
+    </div>
+    <div class="keyboard" id="keyboard"></div>
+  </div>
+
+  <script>
+    // 生成键盘按键（3 排 × 15 个）
+    const kb = document.getElementById('keyboard')
+    const keys = []
+    for (let i = 0; i < 45; i++) {
+      const k = document.createElement('div')
+      k.className = 'key'
+      kb.appendChild(k)
+      keys.push(k)
+    }
+
+    // 随机敲击：每 60ms 随机亮 1~3 个键
+    setInterval(() => {
+      const n = 1 + Math.floor(Math.random() * 3)
+      for (let i = 0; i < n; i++) {
+        const k = keys[Math.floor(Math.random() * keys.length)]
+        k.classList.add('hit')
+        setTimeout(() => k.classList.remove('hit'), 90)
+      }
+    }, 60)
+
+    // 字幕轮换，模拟"一直在忙"
+    const text = document.getElementById('text')
+    const lines = ['一二在打字', '一二在码字', '哒哒哒哒哒', '一二在写代码', '别催了别催了']
+    let i = 0
+    setInterval(() => {
+      i = (i + 1) % lines.length
+      text.textContent = lines[i]
+    }, 2400)
+  </script>
+</body>
+</html>

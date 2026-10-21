@@ -1,6 +1,6 @@
-# Desktop Pet
+# 一二布布 Desktop Pet · YierBubu
 
-A cross-platform desktop pet built with Electron. The character floats on your desktop in a transparent, frameless, always-on-top window, supporting drag, click-to-switch actions, a right-click menu, and a tray icon.
+A cross-platform desktop pet built with Electron, featuring the "一二布布" (YierBubu) characters. The character floats on your desktop in a transparent, frameless, always-on-top window, supporting drag, click-to-switch actions, a right-click menu, and a tray icon.
 
 ## Preview
 
